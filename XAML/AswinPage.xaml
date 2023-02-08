@@ -28,9 +28,11 @@
       Spacing="20"
       VerticalOptions="End">
       <ActivityIndicator
+        x:Name="actInd"
         HeightRequest="40"
+        IsRunning="True"
         IsVisible="True"
-        Color="White" />
+        Color="Black" />
       <Label
         HorizontalOptions="Center"
         Text="Welcome to .NET MAUI!"

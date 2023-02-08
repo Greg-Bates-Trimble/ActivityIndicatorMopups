@@ -1,5 +1,4 @@
 ﻿using Mopups.Pages;
-
 namespace SampleMopups.XAML;
 
 public partial class AswinPage : PopupPage
@@ -17,6 +16,7 @@ public partial class AswinPage : PopupPage
 
     private async void blahButton_Clicked(object sender, EventArgs e)
     {
+        actInd.IsRunning = !actInd.IsRunning;
         await blahButton.RelRotateTo(180,1000);
     }
 }

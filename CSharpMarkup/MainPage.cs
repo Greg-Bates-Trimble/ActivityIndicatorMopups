@@ -184,7 +184,11 @@ public partial class MainPage : ContentPage
                         break;
                 }
 
-                await MopupService.Instance.PushAsync(page);
+                await PopupController.ShowPopupAsync(page);
+
+            await PopupController.WaitTillPopupClose();
+
+            Console.WriteLine("Popup closed");
             }
             catch (Exception)
             {
@@ -192,4 +196,56 @@ public partial class MainPage : ContentPage
             }
         });
     }
+}
+
+public static class PopupController
+{
+  public static Task ShowPopupAsync(PopupPage popup)
+  {
+    return MopupService.Instance.PushAsync(popup, false);
+  }
+
+  public static async Task ShowPopupAndWaitCloseAsync(PopupPage popup)
+  {
+    await ShowPopupAsync(popup);
+    await WaitTillPopupClose();
+  }
+
+  public static Task ClosePopupAsync()
+  {
+    return MopupService.Instance.PopAsync(false);
+  }
+
+  public static Task CloseSpecificPopupAsync(PopupPage popup)
+  {
+    return MopupService.Instance.RemovePageAsync(popup, false);
+  }
+
+  public static Task TransitionPopupsAsync(PopupPage popup)
+  {
+    ClosePopupAsync();
+    return ShowPopupAsync(popup);
+  }
+
+  private static TaskCompletionSource<bool> _tcs = null;
+  public static Task WaitTillPopupClose()
+  {
+    _tcs = new TaskCompletionSource<bool>();
+
+    SubscribeToPoppedEvent();
+
+    return _tcs.Task;
+  }
+
+  private static bool _isSubscribedToPoppedEvent;
+  private static void SubscribeToPoppedEvent()
+  {
+    if (!_isSubscribedToPoppedEvent)
+    {
+      MopupService.Instance.Popped += (sender, e) =>
+      {
+        _tcs.TrySetResult(true);
+      };
+    }
+  }
 }
